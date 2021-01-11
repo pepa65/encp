@@ -1,26 +1,29 @@
 // encp.c
+
 #include "encp.h"
 
 static struct option getopt_long_options[] = {
 	{"help", 0, NULL, 'h'},
+	{"force", 0, NULL, 'f'},
 	{"decrypt", 0, NULL, 'd'},
-	{"input", 1, NULL, 'i'},
 	{"output", 1, NULL, 'o'},
 	{"keyfile", 1 ,NULL, 'k' },
 	{"random", 0, NULL, 'r'},
 	{NULL, 0, NULL, 0}
 };
-static const char *getopt_options = "hdi:o:k:r";
+static const char *getopt_options = "hfdo:k:r";
 
 static void usage(void){
 	puts("encp - Simple data en/decryption\nEncrypting (default) or decrypting "
-		"data with a keyfile or password.\nUsage:\n  encp [-d|--decrypt] "
-		"[-i|--input <in>] [-o|--output <out>] [<keyoptions>]\n    <in>,<out>:    "
-		"Files, or a literal '-' (read from stdin / write to stdout)\n    "
-		"<keyoptions>:\n        -r|--random:    Encrypt with and display a "
-		"randomly generated password\n        -k|--keyfile <keyfile>:    Use "
+		"data with a keyfile or password.\n\nUsage:\n  encp [-d|--decrypt] [<in>] "
+		"[-o|--output <out>] [<options>] [<keyoptions>]\n    "
+		"<in>,<out>:                  Files / '-' (read from stdin, write to "
+		"stdout)\n    <options>:\n        -f|--force:              Allow output "
+		"of encrypt to stdout\n        -h|--help:               Show this help "
+		"text\n    <keyoptions>:\n        -r|--random:             Encrypt with a "
+		"random password and display it\n        -k|--keyfile <keyfile>:  Use "
 		"<keyfile> as the password\n  When no <keyoptions> are given, a password "
-		"is asked for on stdin, in which\n  case <in> needs to be a file.\n");
+		"is asked for on stdin, in which\n  case <in> needs to be a file.");
 	exit(0);
 }
 
@@ -35,7 +38,7 @@ static int file_open(const char *file, int create){
 	fd = create ?
 		open(file, O_CREAT | O_WRONLY | O_TRUNC, 0644) :
 		open(file, O_RDONLY);
-	if (fd == -1) die(1, "Unable to access [%s]", file);
+	if (fd == -1) die(1, "Unable to access '%s' ", file);
 	return fd;
 }
 
@@ -87,11 +90,11 @@ static int stream_decrypt(Context *ctx){
 	while ((readnb = safe_read(ctx->fd_in, chunk_size_p, 4)) == 4){
 		chunk_size = LOAD32_LE(chunk_size_p);
 		if (chunk_size > max_chunk_size)
-			die(0, "Chunk size too large ([%zd] > [%zd])", chunk_size,
+			die(0, "Chunk size too large (%zd > %zd)", chunk_size,
 				max_chunk_size);
 		if (safe_read(ctx->fd_in, chunk, chunk_size + hydro_secretbox_HEADERBYTES)
 				!= chunk_size + hydro_secretbox_HEADERBYTES)
-			die(0, "Chunk too short ([%zd] bytes expected)", chunk_size);
+			die(0, "Chunk too short (%zd bytes expected)", chunk_size);
 		if (hydro_secretbox_decrypt(chunk, chunk, chunk_size +
 				hydro_secretbox_HEADERBYTES, chunk_id, HYDRO_CONTEXT, ctx->key) != 0){
 			fprintf(stderr, "Unable to decrypt chunk #%" PRIu64 " - ", chunk_id);
@@ -140,7 +143,7 @@ static void passgen(void){
 }
 
 static void options_parse(Context *ctx, int argc, char *argv[]){
-	int opt_flag, option_index = 0, random = 0;
+	int opt_flag, opt_index = 0, random = 0, force = 0;
 	char* keyfile = NULL;
 	ctx->encrypt = 1;
 	ctx->in = NULL;
@@ -150,51 +153,52 @@ static void options_parse(Context *ctx, int argc, char *argv[]){
 	optreset = 1;
 #endif
 	while ((opt_flag = getopt_long(argc, argv, getopt_options,
-			getopt_long_options, &option_index)) != -1){
+			getopt_long_options, &opt_index)) != -1){
 		switch (opt_flag){
+			case 'h': usage(); break;
+			case 'f': force = 1; break;
 			case 'd': ctx->encrypt = 0; break;
-			case 'r': random = 1; break;
-			case 'i': ctx->in = optarg; break;
 			case 'o': ctx->out = optarg; break;
 			case 'k': keyfile = optarg; break;
-			default: usage();
+			case 'r': random = 1; break;
+			default: exit(1);
 		}
 	}
 	// Handle unflagged argument(s)
 	if (argv[optind] != NULL) ctx->in = argv[optind++];
 	if (argv[optind] != NULL) {
 		err("only 1 input file can be processed");
-		exit(1);
-	}
-	if (ctx->encrypt == 1 && ctx->out == NULL && isatty(1)){
-		err("not encrypting to stdout");
 		exit(2);
+	}
+	if (!force && ctx->encrypt == 1 && ctx->out == NULL && isatty(1)){
+		err("not encrypting to stdout");
+		exit(3);
 	}
 	if (random)
 		if (ctx->encrypt == 0){
 			err("when decrypting, -r|--random is meaningless");
-			exit(3);
+			exit(4);
 		}
 		else if (keyfile){
 			err("when using a keyfile, -r|--random is superfluous");
-			exit(4);
+			exit(5);
 		}
 		else passgen();
 	else if (keyfile) read_password_file(ctx, keyfile);
 	else if (ctx->in == NULL){
 		err("need password, but stdin is used for data input");
-		exit(5);
+		exit(6);
 	} else { // Get password from stdin
 		fprintf(stderr, "Password: ");
 		char *buf = getpass("");
 		int len = strlen(buf);
 		if (len == -1) {
 			err("error reading needed password");
-			exit(6);
+			exit(7);
 		}
 		if (len == 0) {
 			err("password can't be empty");
-			exit(7);
+			exit(8);
 		}
 		derive_key(ctx, buf, len);
 	}

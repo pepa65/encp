@@ -1,3 +1,5 @@
+// safeio.h
+
 #ifndef safeio_H
 #define safeio_H
 

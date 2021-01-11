@@ -1,10 +1,11 @@
+// encp.h
+
 #ifndef encp_H
 #define encp_H
 
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/uio.h>
-
 #include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -15,9 +16,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-
 #include <hydrogen.h>
-
 #include "common.h"
 #include "safeio.h"
 
