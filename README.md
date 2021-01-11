@@ -1,57 +1,42 @@
-![CodeQL scan](https://github.com/jedisct1/encpipe/workflows/CodeQL%20scan/badge.svg)
+# encp
+**Simple data en/decryption**
 
-Encpipe
-=======
-
-The dum^H^H^Hsimplest encryption tool in the world.
-
-# Usage
-
-Encrypt a file using a password:
-
-```sh
-encpipe -e -p password -i inputfile -o outputfile
+## Usage
+```
+encp - Simple data en/decryption
+Encrypting (default) or decrypting data with a keyfile or password.
+Usage:
+  encp [-d|--decrypt] [<in>] [-o|--output <out>] [<keyoptions>]
+    <in>,<out>:    Files, or a literal '-' (read from stdin / write to stdout)
+    <keyoptions>:
+        -r|--random:    Encrypt with and display a randomly generated password
+        -k|--keyfile <keyfile>:    Use <keyfile> as the password
+  When no <keyoptions> are given, a password is asked for on stdin, in which
+  case <in> needs to be a file.
 ```
 
-Decrypt a file using a password:
+### Example of simple file encryption
+`encp secret.file --output secret.file.encp`
 
+### Example of simple file decryption
+`encp --decrypt secret.file.encp`
+
+### Example of encrypted file transfer
 ```sh
-encpipe -d -p password -i inputfile -o outputfile
+nc -l 6666 |encp --decrypt --keyfile password.key  # Destination
+encp --keyfile password.key secret.file |nc 127.0.0.1 6666  # Source
 ```
 
-`-i` and `-o` can be set to `-` or omitted to read/write from the
-standard input/output.
-
-`-P password_file` can be used to read the password, or an arbitrary
-long key (that doesn't have to be text) from a file.
-
-If you don't feel inspired, `-G` prints a random password.
-
-Example - encrypted file transfer:
-
+### Example of compressed encrypted archive
 ```sh
-nc -l 6666 | encpipe -d -p password
-encpipe -e -p password -i /etc/passwd | nc 127.0.0.1 6666
+zstd --stdout "$file" |encp --output "$file.zst.encp"
 ```
 
-Example - compressed, encrypted archives:
+## Dependencies
+None, [libhydrogen](https://libhydrogen.org) is included as a submodule.
 
-```sh
-zstd -5 -v -c "$FILE" | encpipe -e -p "$PASSWD" -o "${FILE}.zst.encpipe"
-```
-
-# Dependencies
-
-None. It includes [libhydrogen](https://libhydrogen.org) as a
-submodule. There is nothing to install.
-
-# Installation
-
+## Installation
 ```sh
 make
 sudo make install
 ```
-
-# Why
-
-It was faster to write than remember how to use GnuPG and OpenSSL.

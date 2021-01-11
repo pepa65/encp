@@ -1,5 +1,5 @@
-#ifndef encpipe_p_H
-#define encpipe_p_H 1
+#ifndef encp_H
+#define encp_H
 
 #include <stdlib.h>
 #include <sys/types.h>
@@ -19,7 +19,7 @@
 #include <hydrogen.h>
 
 #include "common.h"
-#include "safe_rw.h"
+#include "safeio.h"
 
 #define MIN_BUFFER_SIZE 512
 #define MAX_BUFFER_SIZE 0x7fffffff
