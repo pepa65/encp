@@ -23,21 +23,23 @@
 #define MIN_BUFFER_SIZE 512
 #define MAX_BUFFER_SIZE 0x7fffffff
 #define DEFAULT_BUFFER_SIZE (1 * 1024 * 1024)
-#define HYDRO_CONTEXT "EncPipe"
+#define HYDRO_CONTEXT "EncP452"
 #define PWHASH_OPSLIMIT 1000000
 #define PWHASH_MEMLIMIT 0
 #define PWHASH_THREADS 1
+#define PASSWORD_BYTES 32
+#define PASSWORD_LENGTH PASSWORD_BYTES * 2
 
 typedef struct Context_ {
-    char *         in;
-    char *         out;
-    unsigned char  key[hydro_secretbox_KEYBYTES];
+    char *in;
+    char *out;
+    unsigned char key[hydro_secretbox_KEYBYTES];
     unsigned char *buf;
-    size_t         sizeof_buf;
-    int            fd_in;
-    int            fd_out;
-    int            encrypt;
-    int            has_key;
+    size_t sizeof_buf;
+    int fd_in;
+    int fd_out;
+    int encrypt;
+    int has_key;
 } Context;
 
 #endif

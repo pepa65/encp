@@ -26,9 +26,10 @@ static inline void store32_le(uint8_t dst[4], uint32_t w){
 static void die(int print_errno, const char *format, ...){
 	va_list ap;
 	va_start(ap, format);
+	fprintf(stderr, "Abort: ");
 	vfprintf(stderr, format, ap);
 	va_end(ap);
-	if (print_errno) fprintf(stderr, "- %s", strerror(errno));
+	if (print_errno) fprintf(stderr, " - %s", strerror(errno));
 	fprintf(stderr, "\n");
 	exit(1);
 }
