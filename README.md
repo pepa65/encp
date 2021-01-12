@@ -6,13 +6,19 @@
 encp - Simple data en/decryption
 Encrypting (default) or decrypting data with a keyfile or password.
 Usage:
-  encp [-d|--decrypt] [<in>] [-o|--output <out>] [<keyoptions>]
-    <in>,<out>:    Files, or a literal '-' (read from stdin / write to stdout)
+  encp [-d|--decrypt] [<in> | -o|--output <out>] [<options>] [<keyoptions>]
+    <in>,<out>:                  Files / '-' (read from stdin, write to stdout)
+    <options>:
+        -f|--force:              Allow output of encrypt to stdout
+        -h|--help:               Show this help text
     <keyoptions>:
-        -r|--random:    Encrypt with and display a randomly generated password
-        -k|--keyfile <keyfile>:    Use <keyfile> as the password
+        -r|--random:             Encrypt with a random password and display it
+        -k|--keyfile <keyfile>:  Use <keyfile> as the password
   When no <keyoptions> are given, a password is asked for on stdin, in which
   case <in> needs to be a file.
+  When encrypting, and <out> is not a file, and the output is not being piped,
+  and the -f|--forced flag is not used, the output goes to a file named
+  'file-XXXXXXXX.encp' (XXXXXXXX is a random 4-byte hexadecimal).
 ```
 
 ### Example of simple file encryption
