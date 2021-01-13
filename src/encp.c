@@ -2,22 +2,38 @@
 
 #include "encp.h"
 
+int quiet = 0;
+
 static void usage(void){
 	puts("encp - Simple data en/decryption\nEncrypting (default) or decrypting "
 		"data with a keyfile or password.\nUsage:\n  encp [-d|--decrypt] [<in> |"
 		" -o|--output <out>] [<options>] [<keyoptions>]\n    "
 		"<in>,<out>:                  Files / '-' (read from stdin, write to "
-		"stdout)\n    <options>:\n        -f|--force:              Allow output "
-		"of encrypt to stdout\n        -h|--help:               Show this help "
-		"text\n    <keyoptions>:\n        -r|--random:             Encrypt with a "
-		"random password and display it\n        -k|--keyfile <keyfile>:  Use "
-		"<keyfile> as the password\n  When no <keyoptions> are given, a password "
-		"is asked for on stdin, in which\n  case <in> needs to be a file.\n  When "
-		"encrypting, and <out> is not a file, and the output is not being "
-		"piped,\n  and the -f|--forced flag is not used, then the output goes to "
-		"a file named\n  'file-XXXXXXXX.encp' (XXXXXXXX is a random 4-byte "
-		"hexadecimal).");
+		"stdout)\n    <options>:\n        -f|--force:              Encrypted data "
+		"to stdout (to file otherwise)\n        -q|--quiet:              Surpress "
+		"output on stderr (errors and prompts)\n        -h|--help:               "
+		"Show this help text\n    <keyoptions>:\n        -r|--random:             "
+		"Encrypt with a random password and display it\n        -k|--keyfile "
+		"<keyfile>:  Use <keyfile> as the password\n  When no <keyoptions> are "
+		"given, a password is asked for on stdin, in which\n  case <in> needs to "
+		"be a file.\n  When encrypting, and <out> is not a file, and the output "
+		"is not being piped,\n  and the -f|--forced flag is not given, then the "
+		"output goes to a file named\n  'file-XXXXXXXX.encp' (XXXXXXXX is a "
+		"random 4-byte hexadecimal).");
 	exit(0);
+}
+
+static void die(int print_errno, const char *format, ...){
+	if (!quiet){
+	  va_list ap;
+	  va_start(ap, format);
+	  fprintf(stderr, "Abort: ");
+	  vfprintf(stderr, format, ap);
+	  va_end(ap);
+	  if (print_errno) fprintf(stderr, " - %s", strerror(errno));
+	  fprintf(stderr, "\n");
+	}
+  exit(1);
 }
 
 static int file_open(const char *file, int stdio){
@@ -85,7 +101,7 @@ static int stream_decrypt(Context *ctx){
 		if (safe_read(ctx->fd_in, chunk, chunk_size + hydro_secretbox_HEADERBYTES)
 				!= chunk_size + hydro_secretbox_HEADERBYTES)
 			die(0, "chunk too short (%zd bytes expected)", chunk_size);
-		if (hydro_secretbox_decrypt(chunk, chunk, chunk_size +
+		if (!quiet && hydro_secretbox_decrypt(chunk, chunk, chunk_size +
 				hydro_secretbox_HEADERBYTES, chunk_id, HYDRO_CONTEXT, ctx->key) != 0){
 			fprintf(stderr, "Unable to decrypt chunk #%" PRIu64 " - ", chunk_id);
 			if (chunk_id == 0) die(0, "wrong password or key?");
@@ -126,7 +142,7 @@ static void passgen(Context *ctx){
 	char password[PASSWORD_LENGTH + 1];
 	hydro_random_buf(pw, PASSWORD_BYTES);
 	hydro_bin2hex(password, PASSWORD_LENGTH + 1, pw, PASSWORD_BYTES);
-	fprintf(stderr, "Password: ");
+	if (!quiet) fprintf(stderr, "Password: ");
 	puts(password);
 	derive_key(ctx, password, PASSWORD_LENGTH);
 	hydro_memzero(pw, PASSWORD_BYTES);
@@ -134,10 +150,11 @@ static void passgen(Context *ctx){
 }
 
 static void options_parse(Context *ctx, int argc, char *argv[]){
-	static const char *optstring = "hfdo:k:r";
+	static const char *optstring = "hfqdo:k:r";
 	static struct option longopts[] = {
 		{"help", 0, NULL, 'h'},
 		{"force", 0, NULL, 'f'},
+		{"quiet", 0, NULL, 'q'},
 		{"decrypt", 0, NULL, 'd'},
 		{"output", 1, NULL, 'o'},
 		{"keyfile", 1 ,NULL, 'k' },
@@ -156,6 +173,7 @@ static void options_parse(Context *ctx, int argc, char *argv[]){
 		switch (optflag){
 			case 'h': usage(); break;
 			case 'f': force = 1; break;
+			case 'q': quiet = 1; break;
 			case 'd': ctx->encrypt = 0; break;
 			case 'o':
 				if (ctx->out) die(0, "only 1 output file allowed");
@@ -189,7 +207,7 @@ static void options_parse(Context *ctx, int argc, char *argv[]){
 	else if (ctx->in == NULL)
 		die(0, "using stdin for data input, but also need a password");
 	else { // Get password from stdin
-		fprintf(stderr, "Password: ");
+		if (!quiet) fprintf(stderr, "Password: ");
 		char *buf = getpass("");
 		int len = strlen(buf);
 		if (len == -1)

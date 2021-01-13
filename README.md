@@ -9,23 +9,29 @@ Usage:
   encp [-d|--decrypt] [<in> | -o|--output <out>] [<options>] [<keyoptions>]
     <in>,<out>:                  Files / '-' (read from stdin, write to stdout)
     <options>:
-        -f|--force:              Allow output of encrypt to stdout
+        -f|--force:              Encrypted data to stdout (to file otherwise)
+        -q|--quiet:              Surpress output on stderr (errors and prompts)
         -h|--help:               Show this help text
     <keyoptions>:
         -r|--random:             Encrypt with a random password and display it
-        -k|--keyfile <keyfile>:  Use <keyfile> as the password
+        -k|--keyfile <keyfile>:  Use (part of) <keyfile> as the password
   When no <keyoptions> are given, a password is asked for on stdin, in which
   case <in> needs to be a file.
   When encrypting, and <out> is not a file, and the output is not being piped,
-  and the -f|--forced flag is not used, the output goes to a file named
+  and the -f|--forced flag is not given, the output goes to a file named
   'file-XXXXXXXX.encp' (XXXXXXXX is a random 4-byte hexadecimal).
 ```
 
-### Example of simple file encryption
-`encp secret.file --output secret.file.encp`
+### Examples of simple file encryption
+```sh
+encp secret.file --output secret.file.encp
+encp secret.file
+```
 
-### Example of simple file decryption
-`encp --decrypt secret.file.encp`
+### Examples of simple file decryption
+```sh
+encp --decrypt secret.file.encp
+encp -d secret.file.encp |less
 
 ### Example of encrypted file transfer
 ```sh
@@ -38,11 +44,11 @@ encp --keyfile password.key secret.file |nc 127.0.0.1 6666  # Source
 zstd --stdout "$file" |encp --output "$file.zst.encp"
 ```
 
-## Dependencies
-None, [libhydrogen](https://libhydrogen.org) is included as a submodule.
-
 ## Installation
 ```sh
 make
 sudo make install
 ```
+
+## Dependencies
+None, [libhydrogen](https://libhydrogen.org) is included as a submodule.
