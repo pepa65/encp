@@ -37,7 +37,7 @@ uninstall:
 	rm -f $(PREFIX)/bin/encp
 
 test: bin
-	@echo test | ./encp -k encp | ./encp -d -k encp -o /dev/null
+	@echo test |./encp -k encp |./encp -d -k encp >/dev/null
 
 .PHONY: clean
 

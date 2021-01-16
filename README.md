@@ -4,44 +4,38 @@
 ## Usage
 ```
 encp - Simple data en/decryption
-Encrypting (default) or decrypting data with a keyfile or password.
-Usage:
-  encp [-d|--decrypt] [<in> | -o|--output <out>] [<options>] [<keyoptions>]
-    <in>,<out>:                  Files / '-' (read from stdin, write to stdout)
-    <options>:
-        -f|--force:              Encrypted data to stdout (to file otherwise)
-        -q|--quiet:              Surpress output on stderr (errors and prompts)
-        -h|--help:               Show this help text
-    <keyoptions>:
-        -r|--random:             Encrypt with a random password and display it
+Encrypt (default) or decrypt stdin or file to stdout with keyfile or password.
+Usage:  encp [-d|--decrypt] [<file>] [<options>]
+    Options:  [-q|--quiet] [-r|--random | -k|--keyfile] | -h|--help
+        -r|--random:             Encrypt with random password (and display it)
         -k|--keyfile <keyfile>:  Use (part of) <keyfile> as the password
-  When no <keyoptions> are given, a password is asked for on stdin, in which
-  case <in> needs to be a file.
-  When encrypting, and <out> is not a file, and the output is not being piped,
-  and the -f|--forced flag is not given, the output goes to a file named
-  'file-XXXXXXXX.encp' (XXXXXXXX is a random 4-byte hexadecimal).
+        -q|--quiet:              Suppress output on stderr (errors and prompts)
+        -h|--help:               Show this help text (ignore all other options)
+    A password must be entered if -r|--random and -k|--keyfile are not given.
 ```
 
 ### Examples of simple file encryption
 ```sh
-encp secret.file --output secret.file.encp
-encp secret.file
+encp secret.file >secret.file.encp
+encp secret.file --random >secret.file.encp  # Will display the used password
 ```
 
 ### Examples of simple file decryption
 ```sh
-encp --decrypt secret.file.encp
+encp --decrypt secret.file.encp --keyfile file.key >secret.file
 encp -d secret.file.encp |less
+```
 
 ### Example of encrypted file transfer
 ```sh
-nc -l 6666 |encp --decrypt --keyfile password.key  # Destination
-encp --keyfile password.key secret.file |nc 127.0.0.1 6666  # Source
+nc -l 6666 |encp --decrypt >destination.file
+encp source.file |nc host.ip 6666
 ```
 
 ### Example of compressed encrypted archive
 ```sh
-zstd --stdout "$file" |encp --output "$file.zst.encp"
+zstd --stdout "$file" |encp >"$file.zst.encp"
+zstd --stdout "$file" |encp --keyfile file.key >"$file.zst.encp"
 ```
 
 ## Installation
