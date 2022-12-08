@@ -121,7 +121,7 @@ static void passgen(Context *ctx){
 	hydro_random_buf(pw, PASSWORD_BYTES);
 	hydro_bin2hex(password, PASSWORD_LENGTH + 1, pw, PASSWORD_BYTES);
 	if (!quiet) fprintf(stderr, "Password: ");
-	puts(password);
+	fprintf(stderr, "%s\n", password);
 	derive_key(ctx, password, PASSWORD_LENGTH);
 	hydro_memzero(pw, PASSWORD_BYTES);
 	hydro_memzero(password, PASSWORD_LENGTH);
@@ -168,7 +168,7 @@ static void options_parse(Context *ctx, int argc, char *argv[]){
 		else passgen(ctx);
 	else if (keyfile) read_keyfile(ctx, keyfile);
 	else { // Get password from stdin
-		if (!quiet) fprintf(stderr, "Password: ");
+		if (!quiet) fprintf(stderr, "Password? ");
 		char *buf = getpass("");
 		int len = strlen(buf);
 		if (len == -1)
