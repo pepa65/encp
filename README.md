@@ -39,6 +39,12 @@ zstd --stdout "$file" |encp --keyfile file.key >"$file.zst.encp"
 ```
 
 ## Installation
+
+Download the [precompiled single binary for amd64](https://gitlab.com/pepa65/encp/-/jobs/artifacts/master/raw/encp?job=building)
+and make it executable with `chmod +x encp`.
+
+Or clone the repository by `git clone https://gitlab.com/pepa65/encp`, do `cd encp` and do:
+
 ```sh
 make
 sudo make install
