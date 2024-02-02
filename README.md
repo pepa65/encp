@@ -52,3 +52,4 @@ sudo make install
 
 ## Dependencies
 None, [libhydrogen](https://libhydrogen.org) is included as a submodule.
+It is updated by: `git pull -v --recurse-submodules`
