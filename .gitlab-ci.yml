@@ -1,12 +1,9 @@
-image: ubuntu:16.04
-
 stages:
   - build
 
 building:
   stage: build
   script:
-    - apt-get -y install make
     - make
   artifacts:
     name: encp
