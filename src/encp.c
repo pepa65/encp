@@ -20,13 +20,13 @@ static void usage(void){
 
 static void die(int print_errno, const char *format, ...){
 	if (!quiet){
-	  va_list ap;
-	  va_start(ap, format);
-	  fprintf(stderr, "Abort: ");
-	  vfprintf(stderr, format, ap);
-	  va_end(ap);
-	  if (print_errno) fprintf(stderr, " - %s", strerror(errno));
-	  fprintf(stderr, "\n");
+		va_list ap;
+		va_start(ap, format);
+		fprintf(stderr, "Abort: ");
+		vfprintf(stderr, format, ap);
+		va_end(ap);
+		if (print_errno) fprintf(stderr, " - %s", strerror(errno));
+		fprintf(stderr, "\n");
 	}
   exit(1);
 }
