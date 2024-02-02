@@ -6,6 +6,7 @@ stages:
 building:
   stage: build
   script:
+    - apt-get -y install build-essentials
     - make
   artifacts:
     name: encp
