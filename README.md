@@ -1,17 +1,22 @@
-# encp
+# encp v0.2.0
 **Simple data en/decryption**
+
+Encrypt (or decrypt) stdin or file to stdout with keyfile or password.
+
+Uses [libhydrogen v1.0.0](https://github.com/jedisct1/libhydrogen)
 
 ## Usage
 ```
-encp - Simple data en/decryption
-Encrypt (default) or decrypt stdin or file to stdout with keyfile or password.
-Usage:  encp [-d|--decrypt] [<file>] [<options>]
-    Options:  [-q|--quiet] [-r|--random | -k|--keyfile] | -h|--help
-        -r|--random:             Encrypt with random password (and display it)
+encp v0.2.0 - Simple data en/decryption
+Encrypt (or decrypt) stdin or file to stdout with keyfile or password.
+Usage:  encp [<options>] [<file>] | -h|--help | -V|--version
+    Options:
+        -d|--decrypt:            Decrypt [default: encrypt]        -r|--random:             Encrypt with random password (and display it)
         -k|--keyfile <keyfile>:  Use (part of) <keyfile> as the password
         -q|--quiet:              Suppress output on stderr (errors and prompts)
-        -h|--help:               Show this help text (ignore all other options)
-    A password must be entered if -r|--random and -k|--keyfile are not given.
+        -h|--help:               Just show this help text
+        -V|--version:            Just show the version
+    A password will be asked for if -r/--random and -k/--keyfile are not given.
 ```
 
 ### Examples of simple file encryption
@@ -39,9 +44,7 @@ zstd --stdout "$file" |encp --keyfile file.key >"$file.zst.encp"
 ```
 
 ## Installation
-
-Download the [precompiled single binary for amd64](https://gitlab.com/pepa65/encp/-/jobs/artifacts/master/raw/encp?job=building)
-and make it executable with `chmod +x encp`.
+Download the [precompiled single binary for amd64](https://gitlab.com/pepa65/encp/-/jobs/artifacts/master/raw/encp?job=building), make it executable with `chmod +x encp` and optionally move it to a directory in $PATH.
 
 Or clone the repository by `git clone https://gitlab.com/pepa65/encp`, do `cd encp` and do:
 

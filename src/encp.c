@@ -5,17 +5,18 @@
 int quiet = 0;
 
 static void usage(void){
-	puts("encp - Simple data en/decryption\nEncrypt (default) or decrypt stdin "
-		"or file to stdout with keyfile or password.\nUsage:  encp [-d|--decrypt] "
-		"[<file>] [<options>]\n    Options:  [-q|--quiet] [-r|--random | "
-		"-k|--keyfile] | -h|--help\n        -r|--random:             Encrypt "
-		"with random password (and display it)\n        -k|--keyfile <keyfile>:  "
-		"Use (part of) <keyfile> as the password\n        "
-		"-q|--quiet:              Suppress output on stderr (errors and "
-		"prompts)\n        -h|--help:               Show this help text (ignore "
-		"all other options)\n    A password must be entered if -r|--random and "
-		"-k|--keyfile are not given.");
-	exit(0);
+	printf("encp v%s - Simple data en/decryption\n"
+		"Encrypt (or decrypt) stdin or file to stdout with keyfile or password.\n"
+		"Usage:  encp [<options>] [<file>] | -h|--help | -V|--version\n"
+		"    Options:\n"
+		"        -d|--decrypt:            Decrypt [default: encrypt]"
+		"        -r|--random:             Encrypt with random password (and display it)\n"
+		"        -k|--keyfile <keyfile>:  Use (part of) <keyfile> as the password\n"
+		"        -q|--quiet:              Suppress output on stderr (errors and prompts)\n"
+		"        -h|--help:               Just show this help text\n"
+		"        -V|--version:            Just show the version\n"
+		"    A password will be asked for if -r/--random and -k/--keyfile are not given.\n",
+		VERSION);
 }
 
 static void die(int print_errno, const char *format, ...){
@@ -128,9 +129,10 @@ static void passgen(Context *ctx){
 }
 
 static void options_parse(Context *ctx, int argc, char *argv[]){
-	static const char *optstring = "hqdk:r";
+	static const char *optstring = "hVqdk:r";
 	static struct option longopts[] = {
 		{"help", 0, NULL, 'h'},
+		{"version", 0, NULL, 'V'},
 		{"quiet", 0, NULL, 'q'},
 		{"decrypt", 0, NULL, 'd'},
 		{"keyfile", 1 ,NULL, 'k' },
@@ -146,7 +148,8 @@ static void options_parse(Context *ctx, int argc, char *argv[]){
 	while ((optflag = getopt_long(argc, argv, optstring,
 			longopts, &longindex)) != -1){
 		switch (optflag){
-			case 'h': usage(); break;
+			case 'h': usage(); exit(0);
+			case 'V': printf("encp v%s\n", VERSION); exit(0);
 			case 'q': quiet = 1; break;
 			case 'd': ctx->encrypt = 0; break;
 			case 'k': keyfile = optarg; break;

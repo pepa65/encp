@@ -18,6 +18,7 @@
 #include "common.h"
 #include "safeio.h"
 
+#define VERSION "0.2.0"
 #define KEYLENGTH 512
 #define BUFFER_SIZE (1024 * 1024)
 #define MIN_BUFFER_SIZE 512
