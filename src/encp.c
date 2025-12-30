@@ -7,7 +7,7 @@ int quiet = 0;
 static void usage(void){
 	printf("encp v%s - Simple data en/decryption\n"
 		"Encrypt (or decrypt) stdin or file to stdout with keyfile or password.\n"
-		"Usage:  encp [<options>] [<file>] | -h|--help | -V|--version\n"
+		"Usage:  encp [<options>] [--] [<file>] | -h|--help | -V|--version\n"
 		"    Options:\n"
 		"        -d|--decrypt:            Decrypt [default: encrypt]"
 		"        -r|--random:             Encrypt with random password (and display it)\n"
@@ -15,7 +15,7 @@ static void usage(void){
 		"        -q|--quiet:              Suppress output on stderr (errors and prompts)\n"
 		"        -h|--help:               Just show this help text\n"
 		"        -V|--version:            Just show the version\n"
-		"    A password will be asked for if -r/--random and -k/--keyfile are not given.\n",
+		"    Password prompt will follow if -r/--random and -k/--keyfile are not given.\n",
 		VERSION);
 }
 
