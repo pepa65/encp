@@ -1,4 +1,4 @@
-# encp v0.2.0
+# encp v0.2.1
 **Simple data en/decryption**
 
 Encrypt (or decrypt) stdin or file to stdout with keyfile or password.
@@ -7,17 +7,6 @@ Uses [libhydrogen v1.0.0](https://github.com/jedisct1/libhydrogen)
 
 ## Usage
 ```
-encp v0.2.0 - Simple data en/decryption
-Encrypt (or decrypt) stdin or file to stdout with keyfile or password.
-Usage:  encp [OPTIONS] [--] [FILE] | -h|--help | -V|--version
-    OPTIONS:
-        -d|--decrypt:       Decrypt [default: encrypt]
-        -r|--random:        Encrypt with random password (and display it)
-        -k|--keyfile FILE:  Use (part of) <file> as the password
-        -q|--quiet:         Suppress output on stderr (errors and prompts)
-        -h|--help:          Just show this help text
-        -V|--version:       Just show the version
-    Password prompt will follow if -r/--random and -k/--keyfile are not given.
 ```
 
 ### Examples of simple file encryption
