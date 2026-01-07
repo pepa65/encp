@@ -6,8 +6,10 @@ stages:
 building:
   stage: build
   before_script:
+    - apt-get update -y
+    - apt-get install -y xz-utils
     - wget https://ziglang.org/download/0.15.2/zig-x86_64-linux-0.15.2.tar.xz
-    - tar -xf zig-x86_64-linux-0.15.2.tar.xz
+    - tar xf zig-x86_64-linux-0.15.2.tar.xz
     - export PATH="$PWD/zig-x86_64-linux-0.15.2:$PATH"
   script:
     - zig version
