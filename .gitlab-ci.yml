@@ -5,7 +5,7 @@ stages:
 
 building:
   stage: build
-  prep:
+  before_script:
     - wget https://ziglang.org/builds/zig-linux-x86_64-0.10.0.tar.xz
     - tar -xf zig-linux-x86_64-0.10.0.tar.xz
     - export PATH="$PWD/zig-linux-x86_64-0.10.0:$PATH"
