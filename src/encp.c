@@ -183,13 +183,13 @@ static void options_parse(Context *ctx, int argc, char *argv[]) {
 		read_keyfile(ctx, keyfile);
 	else { // Get password from stdin
 		if (!quiet)
-			fprintf(stderr, "Password? [empty password to abort] ");
+			fprintf(stderr, "Password? [empty to abort] ");
 		char *buf = getpass("");
 		int len = strlen(buf);
 		if (len == -1)
 			die(0, "error reading needed password");
 		if (len == 0)
-			die(0, "password can't be empty");
+			die(0, "password is empty");
 		derive_key(ctx, buf, len);
 	}
 }

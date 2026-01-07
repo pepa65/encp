@@ -1,12 +1,24 @@
-# encp v0.2.1
+# encp v0.2.2
 **Simple data en/decryption**
 
 Encrypt (or decrypt) stdin or file to stdout with keyfile or password.
 
-Uses [libhydrogen v1.0.0](https://github.com/jedisct1/libhydrogen)
+* Uses [libhydrogen v1.0.0](https://github.com/jedisct1/libhydrogen)
+* After: https://github.com/jedisct1/encpipe (different CLI)
 
 ## Usage
 ```
+encp v0.2.2 - Simple data en/decryption
+Encrypt (or decrypt) stdin or file to stdout with keyfile or password.
+Usage:  encp [OPTIONS] [--] [FILE] | -h|--help | -V|--version
+    Options:
+        -d|--decrypt:       Decrypt [default: encrypt]
+        -r|--random:        Encrypt with random password (and display it)
+        -k|--keyfile FILE:  Use (part of) FILE as the password
+        -q|--quiet:         Suppress output on stderr (errors and prompts)
+        -h|--help:          Just show this help text
+        -V|--version:       Just show the version
+    Password prompt will follow if -r/--random and -k/--keyfile are not given.
 ```
 
 ### Examples of simple file encryption
@@ -39,7 +51,7 @@ Download the [precompiled single binary for amd64](https://gitlab.com/pepa65/enc
 Or clone the repository by `git clone https://gitlab.com/pepa65/encp`, do `cd encp` and do:
 
 ```sh
-make
+make  # Or for a dynamically linked version: make NOZIG=1
 sudo make install
 ```
 

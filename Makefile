@@ -1,15 +1,14 @@
 PREFIX ?= /usr/local
 WFLAGS ?= -Wall -Wextra -Wmissing-prototypes -Wdiv-by-zero -Wbad-function-cast -Wcast-align -Wcast-qual -Wfloat-equal -Wmissing-declarations -Wnested-externs -Wno-unknown-pragmas -Wpointer-arith -Wredundant-decls -Wstrict-prototypes -Wswitch-enum -Wno-type-limits
 # Option for static binary with /opt/zig/zig
-ZIG = /opt/zig/zig
-ifneq ("$(wildcard $(ZIG))", "")
-	CC = $(ZIG) cc -target x86_64-linux-musl
+ifndef NOZIG
+	CC = /opt/zig/zig cc -target x86_64-linux-musl
 endif
-CFLAGS ?= -O3 -mtune=native -fno-exceptions -flto $(WFLAGS)
+CFLAGS ?= -Os -fno-exceptions -flto $(WFLAGS)
 CFLAGS += -I. -Iext/libhydrogen
-OBJ = ext/libhydrogen/hydrogen.o src/encp.o src/safeio.o
 STRIP ?= strip
 
+OBJ = ext/libhydrogen/hydrogen.o src/encp.o src/safeio.o
 SRC = \
 	ext/libhydrogen/hydrogen.c \
 	src/common.h \
@@ -20,18 +19,18 @@ SRC = \
 
 all: bin test
 
-bin: encp
+bin: clean encp
 
 $(OBJ): $(SRC)
 
 .c.o:
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $<
 
 encp: $(OBJ)
-	$(CC) $(CFLAGS) -o encp $(OBJ)
+	$(CC) $(CFLAGS) -o encp $(LDFLAGS) $(OBJ)
 
 ext/libhydrogen/hydrogen.c:
-	git submodule update --init || echo "** Make sure you cloned the repository **" >&2
+	git submodule update --init || echo "### Make sure you cloned the repository" >&2
 
 install: all
 	-$(STRIP) --strip-all encp 2> /dev/null || $(STRIP) encp 2> /dev/null
