@@ -5,7 +5,12 @@ stages:
 
 building:
   stage: build
+  prep:
+    - wget https://ziglang.org/builds/zig-linux-x86_64-0.10.0.tar.xz
+    - tar -xf zig-linux-x86_64-0.10.0.tar.xz
+    - export PATH="$PWD/zig-linux-x86_64-0.10.0:$PATH"
   script:
+    - zig version
     - make
   artifacts:
     name: encp
