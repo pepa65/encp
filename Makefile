@@ -1,4 +1,5 @@
-PREFIX ?= /usr/local
+#PREFIX ?= /usr/local
+PREFIX ?= ~
 WFLAGS ?= -Wall -Wextra -Wmissing-prototypes -Wdiv-by-zero -Wbad-function-cast -Wcast-align -Wcast-qual -Wfloat-equal -Wmissing-declarations -Wnested-externs -Wno-unknown-pragmas -Wpointer-arith -Wredundant-decls -Wstrict-prototypes -Wswitch-enum -Wno-type-limits
 # Option for static binary with /opt/zig/zig
 ifndef NOZIG
@@ -34,6 +35,7 @@ ext/libhydrogen/hydrogen.c:
 
 install: all
 	-$(STRIP) --strip-all encp 2> /dev/null || $(STRIP) encp 2> /dev/null
+	upx --best --lzma encp
 	mkdir -p $(PREFIX)/bin
 	install -o 0 -g 0 -m 0755 encp $(PREFIX)/bin 2> /dev/null || install -m 0755 encp $(PREFIX)/bin
 

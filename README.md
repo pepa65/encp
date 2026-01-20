@@ -1,4 +1,4 @@
-# encp v0.2.2
+# encp v0.2.3
 **Simple data en/decryption**
 
 Encrypt (or decrypt) stdin or file to stdout with keyfile or password.
@@ -8,7 +8,7 @@ Encrypt (or decrypt) stdin or file to stdout with keyfile or password.
 
 ## Usage
 ```
-encp v0.2.2 - Simple data en/decryption
+encp v0.2.3 - Simple data en/decryption
 Encrypt (or decrypt) stdin or file to stdout with keyfile or password.
 Usage:  encp [OPTIONS] [--] [FILE] | -h|--help | -V|--version
     Options:
